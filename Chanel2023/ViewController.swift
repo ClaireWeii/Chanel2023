@@ -7,12 +7,13 @@
 
 import UIKit
 import AVFoundation
-import SpriteKit
 
 class ViewController: UIViewController {
     
+    //循環播放器要在viewDidLoad之前宣告，如果在viewDidLoad裡面宣告，當viewDidLoad內的程式跑完後，player就會被清掉造成音樂無法再次播放
     var looper: AVPlayerLooper?
-    var emitter = "date"
+    var particle = "date"
+    //產生發射圖層
     let dateEmitterLayer = CAEmitterLayer()
     let locationEmitterLayer = CAEmitterLayer()
 
@@ -22,10 +23,14 @@ class ViewController: UIViewController {
         
         if let url = URL(string: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/b4/d3/ea/b4d3ea48-71c5-c3db-ea6a-02c134cc5067/mzaf_9371911637032292459.plus.aac.p.m4a"){
             
+            //生成AVQueuePlayer物件
             let player = AVQueuePlayer()
+            //利用AVPlayerItem生成要播的音樂網址
             let item = AVPlayerItem(url: url)
+            //生成AVPlayerLooper，傳入剛剛生成的player&item。到時候AVPlayerLooper將讓item重覆播放
             looper = AVPlayerLooper(player: player, templateItem: item)
             player.play()
+        }
             
             let backgroundImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 375, height: 812))
             backgroundImage.image = UIImage(named: "Beach")
@@ -38,9 +43,10 @@ class ViewController: UIViewController {
             
             pinkImage.mask = chanelImage
             pinkImage.frame = CGRect(x: 0, y: 354.5, width: 375, height: 83)
+            //insertSubView用來控制圖片添加到哪一層，因為background是要放在最底層，因此設定at: 0
             view.insertSubview(backgroundImage, at: 0)
             view.addSubview(pinkImage)
-            }
+            
     }
             func dateEmitter(){
                 //產生發射器
@@ -71,8 +77,6 @@ class ViewController: UIViewController {
                 //設定發射的角度
                 dateEmitterCell.emissionRange = .pi*0.5
                 
-                //產生發射圖層
-                //let dateEmitterLayer = CAEmitterLayer()
                 //設定圖層上的內容
                 dateEmitterLayer.emitterCells = [dateEmitterCell]
                 //設定發射的中心位置
@@ -101,7 +105,6 @@ class ViewController: UIViewController {
                 locationEmiterCell.spinRange = 0.5
                 locationEmiterCell.emissionRange = .pi
                 
-                //let locationEmitterLayer = CAEmitterLayer()
                 locationEmitterLayer.emitterCells = [locationEmiterCell]
                 locationEmitterLayer.emitterPosition = CGPoint(x: view.bounds.width/2, y: -150)
                 locationEmitterLayer.emitterSize = CGSize(width: view.bounds.width, height: 0)
@@ -112,14 +115,14 @@ class ViewController: UIViewController {
     
     
     @IBAction func changeEmitter(_ sender: Any) {
-        if emitter == "date"{
+        if particle == "date"{
             dateEmitter()
             locationEmitterLayer.removeFromSuperlayer()
-            emitter = "location"
+            particle = "location"
         }else{
             locationEmitter()
             dateEmitterLayer.removeFromSuperlayer()
-            emitter = "date"
+            particle = "date"
         }
     }
 }
